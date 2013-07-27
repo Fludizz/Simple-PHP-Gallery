@@ -28,4 +28,11 @@ $smallpath = "small";
 // Or allow the 'genimg.sh' script generate them.
 $thumbpath = "thumb";
 
+// Path for the stylesheet. Either relative path or a full path from the webroot
+$stylesheet = "gallery.css";
+// Path for the gallery file, this can be changed to some alternative path if
+// you decide to have multiple galleries served using a single source gallery
+// file. Must be a relative path or full system path.
+$galleryfile = "gallery.php";
+
 ?>
