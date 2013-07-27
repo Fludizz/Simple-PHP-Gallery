@@ -4,12 +4,6 @@
 // Define the title for the page:
 $title = "Your gallery title";
 
-// The file containing a list of filenames.
-// Either relative path from current dir or full path from webroot.
-// Create it using 'ls | grep -i .jpg | sort > pics.txt' in the fullsize folder
-// or let the 'genimg.sh' generate it for you.
-$imglist = "pics.txt";
-
 // Define the path for the fullsize files directories
 // Either relative path from current dir or full path from webroot.
 $fullpath = "full";

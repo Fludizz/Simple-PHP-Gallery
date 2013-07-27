@@ -1,13 +1,36 @@
 <?php
-header("Cache-Controle: public");
-header('Expires: 65535');
-header('Pragma: cache');
+// Resize function to dynamically create the small sized images.
+function generateResizedImage($src, $dest, $desired_height) {
+	/* read the source image */
+	$source_image = imagecreatefromjpeg($src);
+	$width = imagesx($source_image);
+	$height = imagesy($source_image);
+	
+	/* find the "desired height" of this thumbnail, relative to the desired width  */
+	$desired_width = floor($width * ($desired_height / $height));
+	
+	/* create a new, "virtual" image */
+	$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+	
+	/* copy source image at a resized size */
+	imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+	
+	/* create the physical thumbnail image to its destination */
+	imagejpeg($virtual_image, $dest, 90);
+}
 
-// Define the array with all image file names from defined text file.
-$allpics = file($imglist, FILE_SKIP_EMPTY_LINES);
-
-// An array starts counting at 0, humans at 1. Shift the first image from
-// position 0 to position 1:
+// Read all JPG files from "Fullsize" dir into array.
+if ($handle = opendir($fullpath)) {
+  while (false !== ($file = readdir($handle)))
+  {
+    if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'jpg')
+    {
+        $allpics[] = $file;
+    }
+  }
+  closedir($handle);
+}
+// Make sure array key 0 is unused:
 array_unshift($allpics, "dummy.png");
 unset($allpics[0]);
 
@@ -36,6 +59,55 @@ if (isset($_GET['pic'])) {
     $previmg = $key - 1;
   }
 }
+
+// Test if the required Small & Thumb folder exists and create it if needed:
+if (!file_exists($smallpath)) {
+    mkdir($smallpath, 0775, true);
+}
+if (!file_exists($thumbpath)) {
+    mkdir($thumbpath, 0775, true);
+}
+// Test if the small-sized image requested exists and create if needed:
+if (!file_exists($smallpath . '/' . $allpics[$curimg])) {
+    generateResizedImage($fullpath . '/' . $allpics[$curimg], 
+                         $smallpath . '/' . $allpics[$curimg], 640);
+}
+// Test if the required Thumbnails exist and create them if needed:
+if (!file_exists($thumbpath . '/' . $allpics[$curimg])) {
+    generateResizedImage($fullpath . '/' . $allpics[$curimg], 
+                         $thumbpath . '/' . $allpics[$curimg], 96);
+}
+if (!file_exists($thumbpath . '/' . $allpics[$previmg])) {
+    generateResizedImage($fullpath . '/' . $allpics[$previmg], 
+                         $thumbpath . '/' . $allpics[$previmg], 96);
+}
+if (!file_exists($thumbpath . '/' . $allpics[$nextimg])) {
+    generateResizedImage($fullpath . '/' . $allpics[$nextimg], 
+                         $thumbpath . '/' . $allpics[$nextimg], 96);
+}
+if ($nextimg == $lastpic) {
+  if (!file_exists($thumbpath . '/' . $allpics[1])) {
+      generateResizedImage($fullpath . '/' . $allpics[1], 
+                         $thumbpath . '/' . $allpics[1], 96);
+  }
+} else  {
+  if (!file_exists($thumbpath . '/' . $allpics[$nextimg + 1])) {
+    generateResizedImage($fullpath . '/' . $allpics[$nextimg + 1], 
+                         $thumbpath . '/' . $allpics[$nextimg + 1], 96);
+  }
+}
+if ($previmg == 1) {
+  if (!file_exists($thumbpath . '/' . $allpics[$lastpic])) {
+    generateResizedImage($fullpath . '/' . $allpics[$lastpic], 
+                         $thumbpath . '/' . $allpics[$lastpic], 96);
+  }
+} else {
+  if (!file_exists($thumbpath . '/' . $allpics[$previmg - 1])) {
+    generateResizedImage($fullpath . '/' . $allpics[$previmg - 1], 
+                         $thumbpath . '/' . $allpics[$previmg - 1], 96);
+  }
+}
+
 ?>
 <html>
 <head>
