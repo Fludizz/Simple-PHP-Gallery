@@ -3,9 +3,12 @@ A simple PHP Gallery
 
 There are tons and tons of different gallery tools available online, however
 most of those galleries are very complex in nature and design. This very simple
-PHP Gallery has been created to have very pure simplicity. It is also very light
-on your webserver as no image-generation is done on the fly, everything can be
-done before even uploading the gallery!
+PHP Gallery has been created to have very pure simplicity. It can also be light
+on your webserver as image-generation can be done offline rather then on the 
+fly, everything can be done before even uploading the gallery!
+
+Ofcourse, it can generate the images automatically if you don't feel like
+pre-generating everything ;)
 
 
 Requirements
