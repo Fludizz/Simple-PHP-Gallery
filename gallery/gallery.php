@@ -30,6 +30,9 @@ if ($handle = opendir($fullpath)) {
   }
   closedir($handle);
 }
+// PHP returns files listed based on filesystem order. We want ordered by name.
+natsort($allpics); // sort files
+
 // Make sure array key 0 is unused:
 array_unshift($allpics, "dummy.png");
 unset($allpics[0]);
